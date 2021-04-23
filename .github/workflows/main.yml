@@ -1,0 +1,21 @@
+name: htmltidy5
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: build image
+        run:  make
+      - name: Push to Dockerhub and Github Packages
+        run: |
+          source .env
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com --username ${GITHUB_ACTOR} --password-stdin
+          docker push docker.pkg.github.com/${REPO_OWNER}/${REPO_NAME}/${PKG_NAME}:${RELEASE}
